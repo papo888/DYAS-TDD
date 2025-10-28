@@ -136,27 +136,17 @@ La combinación de **TDD**, **AAA** y **Clases de Equivalencia** permitió crear
 ## Reflexión
 
 ### ¿Qué escenarios no se cubrieron?
-- **Validación de `name`**: nombres nulos/vacíos o con espacios extra no afectan la elegibilidad actual.
-- **Reglas sobre `gender`**: no hay comportamiento distinto por género (no se probaron variaciones).
-- **Concurrencia**: condición de carrera en la verificación de duplicados si hubiera múltiples hilos registrando al mismo tiempo.
-- **Persistencia/infraestructura**: el control de unicidad es en memoria; no se probaron fallos o latencias externas (intencional, por dominio puro).
-- **Auditoría/side effects**: no se valida logging, métricas, ni emisión de eventos de dominio.
-- **Políticas especiales**: no hay reglas para casos como `edad == 0` con recién nacidos (se asume <18 → UNDERAGE) o límites configurables por país/región.
+
+El sistema no valida el atributo `name`, por lo que nombres vacíos o nulos no afectan el registro. Tampoco se consideraron diferencias por `gender` ni situaciones de concurrencia (registros simultáneos). Además, la verificación de duplicados se maneja solo en memoria, sin contemplar fallos externos o persistencia real. Finalmente, no se cubrieron políticas especiales como recién nacidos (`edad == 0`) o límites de edad configurables según región.
 
 ### ¿Qué defectos reales detectaron los tests?
-- **Edad negativa (`-1`)**: inicialmente retornaba `VALID`; los tests forzaron agregar `INVALID_AGE`.
-- **Persona muerta (`alive=false`)**: inicialmente retornaba `VALID`; se añadió la regla `DEAD`.
-- **Duplicados**: segundo registro con el mismo `id` pasaba como `VALID`; se agregó verificación de unicidad con `Set<Integer>`.
-- **Id no válido (`id <= 0`)**: faltaba la regla; se agregó retorno `INVALID`.
 
-> Resultado: todos los defectos quedaron **Resueltos** y validados con las pruebas (cobertura total ~**91 %**, `Registry` **100 %**).
+Las pruebas revelaron varios errores iniciales: las personas con edad negativa se registraban como válidas, las personas muertas también eran aceptadas, los IDs duplicados no se controlaban y los IDs menores o iguales a cero no se rechazaban. Todos estos defectos fueron corregidos, y las pruebas confirmaron su solución, logrando una cobertura total del **91 %** y **100 %** en la clase `Registry`.
 
 ### ¿Cómo mejorarías la clase `Registry` para facilitar su prueba?
-- **Extraer dependencias por puerto/adaptador**: definir una interfaz `VoterRegistryRepository` en dominio (p. ej., `existsById(int)` / `save(Person)`), e inyectar un doble de prueba (in-memory) en tests. Esto elimina estado interno y aísla mejor reglas de negocio.
-- **Value Objects**: crear `DocumentId` y `Age` con validación en su constructor, reduciendo `if`s en `Registry` y concentrando reglas en objetos de dominio.
-- **Políticas configurables**: mover `MIN_AGE` y `MAX_AGE` a una `VoterPolicy` (inyectable), para testear escenarios con diferentes límites sin duplicar lógica.
-- **Reglas explícitas y composables**: aplicar un patrón como **Specification** o una cadena de validadores (`Validator<Person>`) para habilitar pruebas más focalizadas y reutilizables.
-- **Eventos de dominio** (opcional): emitir `VoterRegistered`/`DuplicateDetected` para observabilidad; en pruebas, verificar que se publiquen (con un espía/mocks).
+
+Se podría mejorar extrayendo una interfaz `VoterRegistryRepository` para manejar la unicidad sin estado interno, creando objetos de valor (`Age`, `DocumentId`) que validen por sí mismos, y moviendo los límites de edad (`MIN_AGE`, `MAX_AGE`) a una clase `VoterPolicy` configurable. También sería útil aplicar validadores encadenados o el patrón **Specification**, y opcionalmente emitir eventos de dominio para verificar comportamientos con mayor claridad en pruebas.
+
 
 --- 
 ## Conclusión general
