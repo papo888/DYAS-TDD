@@ -1,5 +1,147 @@
 # Taller de TDD - Pruebas Unitarias
 
+---
+
+## Instrucciones para compilar y ejecutar las pruebas
+
+Ejecutar los siguientes comandos desde la raíz del proyecto (donde está el `pom.xml`):
+
+```bash
+# Compilar el proyecto
+mvn clean compile
+
+# Ejecutar todas las pruebas unitarias
+mvn clean test
+
+# Generar el reporte de cobertura JaCoCo
+mvn verify
+````
+
+El reporte HTML se genera en:
+
+```
+target/site/jacoco/index.html
+```
+
+---
+
+## Descripción del dominio y reglas validadas
+
+El dominio modela el registro de votantes en una **Registraduría**.
+
+Clase principal: `Registry`
+Método principal: `registerVoter(Person p)`
+
+### Reglas de negocio validadas
+
+| Regla | Descripción                      | Resultado esperado        |
+| ----- | -------------------------------- | ------------------------- |
+| 1     | Solo se registran personas vivas | `DEAD` si `alive = false` |
+| 2     | Edad negativa o mayor a 120      | `INVALID_AGE`             |
+| 3     | Menores de edad (0–17 años)      | `UNDERAGE`                |
+| 4     | Adultos válidos (18–120 años)    | `VALID`                   |
+| 5     | Persona nula (`null`)            | `INVALID`                 |
+| 6     | ID menor o igual a 0             | `INVALID`                 |
+| 7     | ID duplicado (ya registrado)     | `DUPLICATED`              |
+
+---
+
+## TDD aplicado (Red → Green → Refactor)
+
+### Ciclo iterativo usado:
+
+1. **RED (Rojo)**
+   Se escribe una prueba que falla (por ejemplo, `shouldRejectDeadPerson`).
+2. **GREEN (Verde)**
+   Se implementa el código mínimo necesario para que la prueba pase.
+3. **REFACTOR (Refactorizar)**
+   Se mejora el código sin romper las pruebas existentes.
+
+### Ejemplo de iteraciones reales
+
+| Iteración | Test que falló (Rojo)      | Solución aplicada (Verde)                         | Refactor realizado                            |
+| --------- | -------------------------- | ------------------------------------------------- | --------------------------------------------- |
+| 1         | `shouldRejectDeadPerson`   | Se añadió `if (!p.isAlive()) return DEAD;`        | Reordenar condiciones y limpiar duplicación   |
+| 2         | `shouldRejectUnderageAt17` | Se añadió validación `if (age < 18)`              | Extracción de constantes `MIN_AGE`, `MAX_AGE` |
+| 3         | `shouldRejectDuplicatedId` | Se agregó estructura `Set<Integer>` para unicidad | Renombrar variables y simplificar flujo       |
+
+---
+
+## Patrón AAA (Arrange – Act – Assert)
+
+Todas las pruebas se escribieron bajo el patrón **AAA**, por ejemplo:
+
+```java
+@Test
+public void shouldRejectDeadPerson() {
+    // Arrange
+    Registry registry = new Registry();
+    Person p = new Person("Carlos", 2, 40, Gender.MALE, false);
+    // Act
+    RegisterResult result = registry.registerVoter(p);
+    // Assert
+    Assert.assertEquals(RegisterResult.DEAD, result);
+}
+```
+
+* **Arrange:** se crean los datos y objetos necesarios.
+* **Act:** se ejecuta el método a probar.
+* **Assert:** se verifica el resultado esperado.
+
+---
+
+## Clases de equivalencia y valores límite
+
+| Caso           | Entrada                    | Resultado esperado | Test correspondiente                  |
+| -------------- | -------------------------- | ------------------ | ------------------------------------- |
+| Persona válida | edad=30, vivo=true, id=1   | VALID              | `shouldRegisterValidPerson`           |
+| Persona muerta | vivo=false                 | DEAD               | `shouldRejectDeadPerson`              |
+| Persona null   | person=null                | INVALID            | `shouldReturnInvalidWhenPersonIsNull` |
+| ID inválido    | id=0                       | INVALID            | `shouldRejectWhenIdIsZeroOrNegative`  |
+| Edad 17        | edad=17                    | UNDERAGE           | `shouldRejectUnderageAt17`            |
+| Edad 18        | edad=18                    | VALID              | `shouldAcceptAdultAt18`               |
+| Edad 120       | edad=120                   | VALID              | `shouldAcceptMaxAge120`               |
+| Edad 121       | edad=121                   | INVALID_AGE        | `shouldRejectInvalidAgeOver120`       |
+| Edad -1        | edad=-1                    | INVALID_AGE        | `shouldRejectInvalidAgeNegative`      |
+| ID duplicado   | registrar dos veces id=777 | DUPLICATED         | `shouldRejectDuplicatedId`            |
+
+---
+
+## Resultados de cobertura (JaCoCo)
+
+* **Cobertura total:** 91 %
+* **Paquete `domain.service`:** 100 %
+* **Paquete `domain.model`:** 93 %
+* **Reporte:** `target/site/jacoco/index.html`
+
+![Captura incluida en la entrega como evidencia visual del reporte](report.png)
+
+---
+
+## Reflexión final
+
+Durante el taller se aplicó el proceso **Test-Driven Development (TDD)** para construir el dominio de una aplicación de registraduría.
+El enfoque **Red → Green → Refactor** permitió:
+
+* Detectar errores tempranamente (por ejemplo, edad negativa, persona muerta, ID duplicado).
+* Asegurar la calidad del código con **cobertura superior al 90 %**.
+* Mantener un código limpio, con dependencias hacia adentro (arquitectura limpia).
+* Expresar los casos en un lenguaje de negocio claro mediante pruebas con estilo **BDD** (“Given–When–Then”).
+
+La combinación de **TDD**, **AAA** y **Clases de Equivalencia** permitió crear un sistema confiable y fácil de mantener, alineado con las reglas del dominio.
+
+---
+
+## Conclusión general
+
+El desarrollo guiado por pruebas permitió que el sistema evolucionara de manera controlada, reduciendo defectos y mejorando la trazabilidad entre requisitos y código.
+Todas las pruebas pasan exitosamente (`mvn clean test`), y la cobertura JaCoCo valida la completitud del proceso de testing.
+
+> 💬 *En conjunto, el proyecto cumple con los objetivos del taller:
+> dominio puro, pruebas aisladas, documentación clara y trazabilidad total del comportamiento validado.*
+
+```
+---
 Este taller adapta el enfoque clásico de **TDD** (Red → Green → Refactor) a una **Arquitectura Limpia (Clean Architecture)**. El objetivo es que las **pruebas unitarias** garanticen la calidad del **dominio** sin acoplarse a frameworks o infraestructura.
 
 ---
