@@ -157,7 +157,7 @@ Todas las pruebas pasan exitosamente (`mvn clean test`), y la cobertura JaCoCo v
 
 
 ---
-Continuación de intrucciones dadas por el profesor:
+### Continuación de intrucciones dadas por el profesor:
 
 Este taller adapta el enfoque clásico de **TDD** (Red → Green → Refactor) a una **Arquitectura Limpia (Clean Architecture)**. El objetivo es que las **pruebas unitarias** garanticen la calidad del **dominio** sin acoplarse a frameworks o infraestructura.
 
