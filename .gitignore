@@ -1,18 +1,22 @@
+# Maven
+/target/
+
+# Compilados Java
 *.class
-
-# Mobile Tools for Java (J2ME)
-.mtj.tmp/
-
-# Package Files #
 *.jar
 *.war
 *.ear
 
-# virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
+# IDEs y editores
+.idea/
+.vscode/
+*.iml
+.classpath
+.project
+.settings/
+
+# Sistema operativo
+.DS_Store
+
+# Logs y temporales
 hs_err_pid*
-
-registraduria
-
-target/
-
-*.ini

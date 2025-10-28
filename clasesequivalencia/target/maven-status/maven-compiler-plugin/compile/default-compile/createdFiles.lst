@@ -1,0 +1,5 @@
+edu/unisabana/tyvs/tdd/domain/model/Person.class
+edu/unisabana/tyvs/tdd/domain/model/RegisterResult.class
+edu/unisabana/tyvs/tdd/domain/model/Gender.class
+edu/unisabana/tyvs/tdd/App.class
+edu/unisabana/tyvs/tdd/domain/service/Registry.class

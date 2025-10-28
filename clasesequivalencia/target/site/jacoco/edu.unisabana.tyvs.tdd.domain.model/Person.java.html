@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Person.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">clasesequivalencia</a> &gt; <a href="index.source.html" class="el_package">edu.unisabana.tyvs.tdd.domain.model</a> &gt; <span class="el_source">Person.java</span></div><h1>Person.java</h1><pre class="source lang-java linenums">package edu.unisabana.tyvs.tdd.domain.model;
+
+public class Person {
+    private final String name;
+    private final int id;
+    private final int age;
+    private final Gender gender;
+    private final boolean alive;
+
+<span class="fc" id="L10">    public Person(String name, int id, int age, Gender gender, boolean alive) {</span>
+<span class="fc" id="L11">        this.name = name;</span>
+<span class="fc" id="L12">        this.id = id;</span>
+<span class="fc" id="L13">        this.age = age;</span>
+<span class="fc" id="L14">        this.gender = gender;</span>
+<span class="fc" id="L15">        this.alive = alive;</span>
+<span class="fc" id="L16">    }</span>
+
+<span class="nc" id="L18">    public String getName() { return name; }</span>
+<span class="fc" id="L19">    public int getId() { return id; }</span>
+<span class="fc" id="L20">    public int getAge() { return age; }</span>
+<span class="nc" id="L21">    public Gender getGender() { return gender; }</span>
+<span class="fc" id="L22">    public boolean isAlive() { return alive; }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>
