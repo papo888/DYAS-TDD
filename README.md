@@ -131,17 +131,46 @@ El enfoque **Red → Green → Refactor** permitió:
 La combinación de **TDD**, **AAA** y **Clases de Equivalencia** permitió crear un sistema confiable y fácil de mantener, alineado con las reglas del dominio.
 
 ---
+---
 
+## Reflexión
+
+### ¿Qué escenarios no se cubrieron?
+- **Validación de `name`**: nombres nulos/vacíos o con espacios extra no afectan la elegibilidad actual.
+- **Reglas sobre `gender`**: no hay comportamiento distinto por género (no se probaron variaciones).
+- **Concurrencia**: condición de carrera en la verificación de duplicados si hubiera múltiples hilos registrando al mismo tiempo.
+- **Persistencia/infraestructura**: el control de unicidad es en memoria; no se probaron fallos o latencias externas (intencional, por dominio puro).
+- **Auditoría/side effects**: no se valida logging, métricas, ni emisión de eventos de dominio.
+- **Políticas especiales**: no hay reglas para casos como `edad == 0` con recién nacidos (se asume <18 → UNDERAGE) o límites configurables por país/región.
+
+### ¿Qué defectos reales detectaron los tests?
+- **Edad negativa (`-1`)**: inicialmente retornaba `VALID`; los tests forzaron agregar `INVALID_AGE`.
+- **Persona muerta (`alive=false`)**: inicialmente retornaba `VALID`; se añadió la regla `DEAD`.
+- **Duplicados**: segundo registro con el mismo `id` pasaba como `VALID`; se agregó verificación de unicidad con `Set<Integer>`.
+- **Id no válido (`id <= 0`)**: faltaba la regla; se agregó retorno `INVALID`.
+
+> Resultado: todos los defectos quedaron **Resueltos** y validados con las pruebas (cobertura total ~**91 %**, `Registry` **100 %**).
+
+### ¿Cómo mejorarías la clase `Registry` para facilitar su prueba?
+- **Extraer dependencias por puerto/adaptador**: definir una interfaz `VoterRegistryRepository` en dominio (p. ej., `existsById(int)` / `save(Person)`), e inyectar un doble de prueba (in-memory) en tests. Esto elimina estado interno y aísla mejor reglas de negocio.
+- **Value Objects**: crear `DocumentId` y `Age` con validación en su constructor, reduciendo `if`s en `Registry` y concentrando reglas en objetos de dominio.
+- **Políticas configurables**: mover `MIN_AGE` y `MAX_AGE` a una `VoterPolicy` (inyectable), para testear escenarios con diferentes límites sin duplicar lógica.
+- **Reglas explícitas y composables**: aplicar un patrón como **Specification** o una cadena de validadores (`Validator<Person>`) para habilitar pruebas más focalizadas y reutilizables.
+- **Eventos de dominio** (opcional): emitir `VoterRegistered`/`DuplicateDetected` para observabilidad; en pruebas, verificar que se publiquen (con un espía/mocks).
+
+--- 
 ## Conclusión general
 
 El desarrollo guiado por pruebas permitió que el sistema evolucionara de manera controlada, reduciendo defectos y mejorando la trazabilidad entre requisitos y código.
 Todas las pruebas pasan exitosamente (`mvn clean test`), y la cobertura JaCoCo valida la completitud del proceso de testing.
 
-> 💬 *En conjunto, el proyecto cumple con los objetivos del taller:
+ *En conjunto, el proyecto cumple con los objetivos del taller:
 > dominio puro, pruebas aisladas, documentación clara y trazabilidad total del comportamiento validado.*
 
-```
+
 ---
+Continuación de intrucciones dadas por el profesor:
+
 Este taller adapta el enfoque clásico de **TDD** (Red → Green → Refactor) a una **Arquitectura Limpia (Clean Architecture)**. El objetivo es que las **pruebas unitarias** garanticen la calidad del **dominio** sin acoplarse a frameworks o infraestructura.
 
 ---
