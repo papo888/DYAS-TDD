@@ -131,7 +131,6 @@ El enfoque **Red → Green → Refactor** permitió:
 La combinación de **TDD**, **AAA** y **Clases de Equivalencia** permitió crear un sistema confiable y fácil de mantener, alineado con las reglas del dominio.
 
 ---
----
 
 ## Reflexión
 
@@ -154,8 +153,7 @@ Se podría mejorar extrayendo una interfaz `VoterRegistryRepository` para maneja
 El desarrollo guiado por pruebas permitió que el sistema evolucionara de manera controlada, reduciendo defectos y mejorando la trazabilidad entre requisitos y código.
 Todas las pruebas pasan exitosamente (`mvn clean test`), y la cobertura JaCoCo valida la completitud del proceso de testing.
 
- *En conjunto, el proyecto cumple con los objetivos del taller:
-> dominio puro, pruebas aisladas, documentación clara y trazabilidad total del comportamiento validado.*
+ *En conjunto, el proyecto cumple con los objetivos del taller: dominio puro, pruebas aisladas, documentación clara y trazabilidad total del comportamiento validado.*
 
 
 ---
